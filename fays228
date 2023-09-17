@@ -1,0 +1,36 @@
+// Define the function to check planetary aspect
+bool CheckPlanetaryAspect(string planet1, string planet2, int aspect, double orb)
+{
+    double angle = iCustom(Symbol(), 0, "AstroIndicators", "PlanetaryAspect", 0, 0, planet1, planet2, aspect, 0, 0);
+    return (angle != EMPTY_VALUE && MathAbs(angle) <= orb);
+}
+
+// Define the function to check relative longitude
+bool CheckRelativeLongitude(string planet1, int condition)
+{
+    double longitude = iCustom(Symbol(), 0, "AstroIndicators", "RelativeLongitude", 0, 0, planet1, 0, 0, 0);
+    return (condition == 0 && longitude == 0) || (condition == 1 && longitude == 1);
+}
+
+// Main trading logic
+int start()
+{
+    bool condition1 = CheckPlanetaryAspect("Sun", "Mercury", AS_CONJUNCTION, 14.0);
+    bool condition2 = CheckPlanetaryAspect("Sun", "Mercury", AS_CONJUNCTION, 12.0);
+    bool condition3 = CheckRelativeLongitude("Mercury", 0);
+
+    bool condition4 = (condition1 && condition3) || (condition2 && condition3);
+
+    double sunLongitude = iCustom(Symbol(), 0, "AstroIndicators", "Longitude", 0, 0, "Sun", 0, 0, 0);
+    double moonLongitude = iCustom(Symbol(), 0, "AstroIndicators", "Longitude", 0, 0, "Moon", 0, 0, 0);
+
+    bool condition5 = MathAbs(sunLongitude - moonLongitude) >= 16.0;
+
+    if (condition4 && condition5)
+    {
+        // Your trading logic here
+        // Execute your trading actions when all conditions are met
+    }
+
+    return 0;
+}
